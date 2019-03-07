@@ -317,6 +317,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     final ChannelFuture initAndRegister() {
         Channel channel = null;
         try {
+            //初始化 channel对象，其实就是利用反射调用NioSocketChannel的构造方法
             channel = channelFactory.newChannel();
             init(channel);
         } catch (Throwable t) {
