@@ -498,6 +498,7 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
     private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
         if (invokeHandler()) {
             try {
+                //最终会到一个内部类HeadContext中
                 ((ChannelOutboundHandler) handler()).bind(this, localAddress, promise);
             } catch (Throwable t) {
                 notifyOutboundHandlerException(t, promise);

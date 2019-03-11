@@ -73,6 +73,7 @@ public abstract class MultithreadEventExecutorGroup extends AbstractEventExecuto
         }
 
         if (executor == null) {
+            //新建一个线程执行器，线程执行器每次执行一个任务都会创建一个线程实体，线程命名规则是nioEventLoop-1-xx
             executor = new ThreadPerTaskExecutor(newDefaultThreadFactory());
         }
 
@@ -81,6 +82,7 @@ public abstract class MultithreadEventExecutorGroup extends AbstractEventExecuto
         for (int i = 0; i < nThreads; i ++) {
             boolean success = false;
             try {
+                //新建一个EventLoop数组,里面做的事有保存线程执行器，新建一个selector和mpscQueue
                 children[i] = newChild(executor, args);
                 success = true;
             } catch (Exception e) {
@@ -107,7 +109,7 @@ public abstract class MultithreadEventExecutorGroup extends AbstractEventExecuto
                 }
             }
         }
-
+        //新建一个线程选择器
         chooser = chooserFactory.newChooser(children);
 
         final FutureListener<Object> terminationListener = new FutureListener<Object>() {

@@ -383,6 +383,7 @@ public abstract class AbstractNioChannel extends AbstractChannel {
         boolean selected = false;
         for (;;) {
             try {
+                //具体的把在NioServerSocketChannel初始化的时候初始的jdk的channel注册号selector上，并且把当前的Netty的channel附着上去
                 selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);
                 return;
             } catch (CancelledKeyException e) {
