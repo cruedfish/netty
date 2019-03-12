@@ -32,6 +32,7 @@ public final class DefaultEventExecutorChooserFactory implements EventExecutorCh
     @SuppressWarnings("unchecked")
     @Override
     public EventExecutorChooser newChooser(EventExecutor[] executors) {
+        //判断当前的EventLoopGroup线程个数是否是2的倍数，true的话创建PowerOfTwo
         if (isPowerOfTwo(executors.length)) {
             return new PowerOfTwoEventExecutorChooser(executors);
         } else {
@@ -50,7 +51,7 @@ public final class DefaultEventExecutorChooserFactory implements EventExecutorCh
         PowerOfTwoEventExecutorChooser(EventExecutor[] executors) {
             this.executors = executors;
         }
-
+        //如果exectors.length是2的次幂    那么和a-1做与运算就和取模的结果是一样的
         @Override
         public EventExecutor next() {
             return executors[idx.getAndIncrement() & executors.length - 1];
