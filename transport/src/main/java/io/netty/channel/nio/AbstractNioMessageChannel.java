@@ -72,6 +72,7 @@ public abstract class AbstractNioMessageChannel extends AbstractNioChannel {
             try {
                 try {
                     do {
+                        //循环调用doReadMessages方法
                         int localRead = doReadMessages(readBuf);
                         if (localRead == 0) {
                             break;
@@ -82,6 +83,7 @@ public abstract class AbstractNioMessageChannel extends AbstractNioChannel {
                         }
 
                         allocHandle.incMessagesRead(localRead);
+                        //判断是否要继续读下去，如果读取的连接数超过16则放弃继续读
                     } while (allocHandle.continueReading());
                 } catch (Throwable t) {
                     exception = t;
@@ -90,6 +92,7 @@ public abstract class AbstractNioMessageChannel extends AbstractNioChannel {
                 int size = readBuf.size();
                 for (int i = 0; i < size; i ++) {
                     readPending = false;
+                    //会调用HeadContext的channelRead方法 ， 然后调用到ServerBootStrapAcceptor中
                     pipeline.fireChannelRead(readBuf.get(i));
                 }
                 readBuf.clear();
@@ -110,7 +113,7 @@ public abstract class AbstractNioMessageChannel extends AbstractNioChannel {
                 }
             } finally {
                 // Check if there is a readPending which was not processed yet.
-                // This could be for two reasons:
+                // This could be for two reasons:0
                 // * The user called Channel.read() or ChannelHandlerContext.read() in channelRead(...) method
                 // * The user called Channel.read() or ChannelHandlerContext.read() in channelReadComplete(...) method
                 //

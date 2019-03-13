@@ -142,7 +142,9 @@ abstract class PoolArena<T> implements PoolArenaMetric {
     abstract boolean isDirect();
 
     PooledByteBuf<T> allocate(PoolThreadCache cache, int reqCapacity, int maxCapacity) {
+        //从回收站里面拿到buf  //进行复用这个buf对象，即把他的指针进行复原
         PooledByteBuf<T> buf = newByteBuf(maxCapacity);
+        //先在缓存上分配，分配失败则在内存上分配
         allocate(cache, buf, reqCapacity);
         return buf;
     }
@@ -170,7 +172,7 @@ abstract class PoolArena<T> implements PoolArenaMetric {
     static boolean isTiny(int normCapacity) {
         return (normCapacity & 0xFFFFFE00) == 0;
     }
-
+    //内存分配
     private void allocate(PoolThreadCache cache, PooledByteBuf<T> buf, final int reqCapacity) {
         final int normCapacity = normalizeCapacity(reqCapacity);
         if (isTinyOrSmall(normCapacity)) { // capacity < pageSize

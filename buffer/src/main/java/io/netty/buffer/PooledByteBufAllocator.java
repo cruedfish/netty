@@ -238,6 +238,7 @@ public class PooledByteBufAllocator extends AbstractByteBufAllocator implements 
         int pageShifts = validateAndCalculatePageShifts(pageSize);
 
         if (nHeapArena > 0) {
+            //初始化Arenas数组 ，默认的大小还是两倍CPU核心数
             heapArenas = newArenaArray(nHeapArena);
             List<PoolArenaMetric> metrics = new ArrayList<PoolArenaMetric>(heapArenas.length);
             for (int i = 0; i < heapArenas.length; i ++) {
@@ -321,9 +322,10 @@ public class PooledByteBufAllocator extends AbstractByteBufAllocator implements 
 
         return toLeakAwareBuffer(buf);
     }
-
+    //创建一个pooled的DirectBuffer
     @Override
     protected ByteBuf newDirectBuffer(int initialCapacity, int maxCapacity) {
+        //基于threadLocal类似的 获取线程对应的cache 执行PoolThreadLocalCache的initialValue方法，其实是把arena的成员变量赋值进去
         PoolThreadCache cache = threadCache.get();
         PoolArena<ByteBuffer> directArena = cache.directArena;
 
@@ -440,6 +442,7 @@ public class PooledByteBufAllocator extends AbstractByteBufAllocator implements 
 
         @Override
         protected synchronized PoolThreadCache initialValue() {
+            //获取一个最少被使用的heapArena和DirectArena  ， 两种数组在构造函数被初始化
             final PoolArena<byte[]> heapArena = leastUsedArena(heapArenas);
             final PoolArena<ByteBuffer> directArena = leastUsedArena(directArenas);
 

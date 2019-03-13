@@ -205,10 +205,11 @@ public class DefaultChannelPipeline implements ChannelPipeline {
     public final ChannelPipeline addLast(EventExecutorGroup group, String name, ChannelHandler handler) {
         final AbstractChannelHandlerContext newCtx;
         synchronized (this) {
+            //判断handler是否被重复添加过
             checkMultiplicity(handler);
 
             newCtx = newContext(group, filterName(name, handler), handler);
-
+            //将handlerContext添加到节点末尾
             addLast0(newCtx);
 
             // If the registered is false it means that the channel was not registered on an eventloop yet.
@@ -232,6 +233,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
                 return this;
             }
         }
+        //回调channelHandlerAdded0方法
         callHandlerAdded0(newCtx);
         return this;
     }
@@ -1419,8 +1421,9 @@ public class DefaultChannelPipeline implements ChannelPipeline {
 
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
+            //传播ChannelActive方法
             ctx.fireChannelActive();
-
+            //如果是自动读数据的话，给socket标志读的感兴趣事件
             readIfIsAutoRead();
         }
 

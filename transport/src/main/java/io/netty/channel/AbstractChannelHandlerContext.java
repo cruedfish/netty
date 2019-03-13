@@ -671,6 +671,7 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
         final AbstractChannelHandlerContext next = findContextOutbound();
         EventExecutor executor = next.executor();
         if (executor.inEventLoop()) {
+            //最终会调到HeadContext的read方法中
             next.invokeRead();
         } else {
             Runnable task = next.invokeReadTask;

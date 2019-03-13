@@ -418,6 +418,7 @@ public abstract class AbstractNioChannel extends AbstractChannel {
 
         final int interestOps = selectionKey.interestOps();
         if ((interestOps & readInterestOp) == 0) {
+            //将该selectionKey感兴趣的事件注册为读事件
             selectionKey.interestOps(interestOps | readInterestOp);
         }
     }
